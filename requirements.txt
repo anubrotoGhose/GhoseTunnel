@@ -23,7 +23,7 @@ jupyter_core==5.7.2
 matplotlib-inline==0.1.7
 multitasking==0.0.11
 nest-asyncio==1.6.0
-nsetools @ file:///home/edwardsepiol/Projects/ArgenticFinTerm/ArgenticFinQuantum/examples/nsetools
+nsetools @ file:///home/edwardsepiol/Projects/ArgenticFinTerm/ArgenticFinQuantum/nsescraper/nsetools
 numpy==2.2.3
 packaging==24.2
 pandas==2.2.3
