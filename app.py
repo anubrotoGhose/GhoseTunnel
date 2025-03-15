@@ -1,5 +1,5 @@
-# from nsescraper.nsetools.nsetools.nse import Nse
-from nsetools import Nse
+from nsescraper.nsetools.nsetools.nse import Nse
+# from nsetools import Nse
 from fastapi import FastAPI
 import asyncio
 import uvicorn
