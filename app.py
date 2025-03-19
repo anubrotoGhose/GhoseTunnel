@@ -97,5 +97,5 @@ async def get_future_quote(code: str, expiry_date: str):
     """Fetch and return future quotes for a given stock."""
     return await asyncio.to_thread(nse.get_future_quote, code, expiry_date)
 
-if __name__ == "__main__":
-    app.run(port=5000, debug=True)  # Use Flask's built-in server for development
+# if __name__ == "__main__":
+#     app.run(port=5000, debug=True)  # Use Flask's built-in server for development
