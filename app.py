@@ -1,101 +1,101 @@
-from nsescraper.nsetools.nsetools.nse import Nse
-# from nsetools import Nse
-from fastapi import FastAPI
+from nsetools import Nse
+from flask import Flask
 import asyncio
-import uvicorn
+
 nse = Nse()
-app = FastAPI()
+app = Flask(__name__)
 
-@app.get("/")
+@app.route("/")
 def home():
-    return {
-        "message": "GhoseTunnel"
-    }
+    return {"message": "GhoseTunnel"}
 
-@app.get("/items/{item_id}")
+@app.route("/items/<int:item_id>")
 def read_item(item_id: int):
-    return {
-        "item_id": item_id
-    }
+    return {"item_id": item_id}
 
-@app.get("/get_all_stock_codes")
+@app.route("/get_all_stock_codes")
 async def nse_all_stock_codes():
-    """Endpoint to fetch and return all stock codes (tickers) traded on the NSE in JSON format."""
+    """Fetch and return all stock codes (tickers) traded on NSE in JSON."""
     return await asyncio.to_thread(nse.get_stock_codes)
 
-@app.get("/is_valid_code/{code}")
+@app.route("/is_valid_code/<code>")
 async def is_valid_ticker_checker(code: str):
-    """Endpoint to fetch and return and check if company code/symbol/ticker is correct"""
-    return {
-        "validity": asyncio.to_thread(nse.is_valid_code, code)
-    }
+    """Check if the given company code/symbol/ticker is valid."""
+    return {"validity": await asyncio.to_thread(nse.is_valid_code, code)}
 
-@app.get("/get_company_quote/{code}")
+@app.route("/get_company_quote/<code>")
 async def company_profile(code: str):
-    """Endpoint to fetch and return company quote based on given code (ticker)"""
-    return {
-        code: await asyncio.to_thread(nse.get_quote, code)
-    }
+    """Fetch and return company quote for a given ticker."""
+    return {code: await asyncio.to_thread(nse.get_quote, code)}
 
-@app.get("/get_52_week_high")
-async def get_52_week_high():
-    """Endpoint to fetch and return get_52_week_high in JSON"""
-    return await asyncio.to_thread(nse.get_52_week_high)
+@app.route("/get_52_week_high/<code>")
+def get_52_week_high(code):
+    """Fetch and return the 52-week high price of a given stock."""
+    stock_data = nse.get_quote(code)
+    if stock_data and "yearHigh" in stock_data:
+        return ({"52_week_high": stock_data["yearHigh"]})
+    else:
+        return ({"error": "Data not available"}), 404
 
-@app.get("/get_52_week_low")
-async def get_52_week_high():
-    """Endpoint to fetch and return get_52_week_low in JSON"""
-    return await asyncio.to_thread(nse.get_52_week_low)
 
-@app.get("/get_index_list")
+@app.route("/get_52_week_low/<code>")
+async def get_52_week_low(code: str):
+    """Fetch and return 52-week low stock prices."""
+    stock_data = nse.get_quote(code)
+    if stock_data and "yearLow" in stock_data:
+        return ({"52_week_low": stock_data["yearLow"]})
+    else:
+        return ({"error": "Data not available"}), 404
+
+@app.route("/get_index_list")
 async def get_index_list():
-    """Endpoint to fetch and return index lists in JSON"""
+    """Fetch and return all available NSE indices."""
     return await asyncio.to_thread(nse.get_index_list)
 
-@app.get("/get_all_index_quote")
+@app.route("/get_all_index_quote")
 async def get_all_index_quote():
-    """Endpoint to fetch and return all index_quote | json of index codes in JSON"""
-    return await asyncio.to_thread(nse.get_index_list)
+    """Fetch and return quotes for all indices."""
+    return await asyncio.to_thread(nse.get_all_index_quote)  # Ensure this function exists
 
-@app.get("/get_top_gainers")
+@app.route("/get_top_gainers")
 async def get_top_gainers_default():
-    """Endpoint to fetch and return top gainers in NIFTY which is default in JSON"""
+    """Fetch and return top gainers (default: NIFTY)."""
     return await asyncio.to_thread(nse.get_top_gainers, "NIFTY")
 
-@app.get("/get_top_gainers/{index}")
+@app.route("/get_top_gainers/<index>")
 async def get_top_gainers(index: str):
-    """Endpoint to fetch and return top gainers based on index in JSON"""
+    """Fetch and return top gainers for a specific index."""
     return await asyncio.to_thread(nse.get_top_gainers, index)
 
-@app.get("/get_top_losers")
+@app.route("/get_top_losers")
 async def get_top_losers_default():
-    """Endpoint to fetch and return top losers in nifty which is default in JSON"""
+    """Fetch and return top losers (default: NIFTY)."""
     return await asyncio.to_thread(nse.get_top_losers, "NIFTY")
 
-@app.get("/get_top_losers/{index}")
+@app.route("/get_top_losers/<index>")
 async def get_top_losers(index: str):
-    """Endpoint to fetch and return top losers based on index in JSON"""
+    """Fetch and return top losers for a specific index."""
     return await asyncio.to_thread(nse.get_top_losers, index)
 
-@app.get("/get_advances_declines/{code}")
+@app.route("/get_advances_declines/<code>")
 async def get_advances_declines(code: str):
-    """Endpoint to fetch and return advances declines of company based on code/sympbol/ticker in JSON"""
+    """Fetch and return advances/declines of a company."""
     return await asyncio.to_thread(nse.get_advances_declines, code)
 
-@app.get("/get_stocks_in_index/{index}")
+@app.route("/get_stocks_in_index/<index>")
 async def get_stocks_in_index(index: str):
-    """Endpoint to fetch and return stocks in index in JSON"""
+    """Fetch and return all stocks in a given index."""
     return await asyncio.to_thread(nse.get_stocks_in_index, index)
 
-@app.get("/get_top_gainers_losers/{direction}/{index}")
-async def get_advances_declines(direction: str, index: str):
-    """Endpoint to fetch and return top gainers/losers based on direction and index in JSON"""
+@app.route("/get_top_gainers_losers/<direction>/<index>")
+async def get_top_gainers_losers(direction: str, index: str):  # Fixed duplicate function name
+    """Fetch and return top gainers or losers based on direction (up/down) and index."""
     return await asyncio.to_thread(nse._get_top_gainers_losers, direction, index)
 
-@app.get("/get_future_quote/{code}/{expiry_date}")
+@app.route("/get_future_quote/<code>/<expiry_date>")
 async def get_future_quote(code: str, expiry_date: str):
-    """Endpoint to fetch and return future quote based on code (ticker) in JSON"""
+    """Fetch and return future quotes for a given stock."""
     return await asyncio.to_thread(nse.get_future_quote, code, expiry_date)
 
-# if __name__ == "__main__":
-#     uvicorn.run("main:app", port=5000, log_level="info")
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)  # Use Flask's built-in server for development

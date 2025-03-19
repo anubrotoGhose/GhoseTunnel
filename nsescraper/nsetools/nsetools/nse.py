@@ -27,7 +27,7 @@ import requests
 import csv
 from datetime import datetime as dt 
 from nsetools.bases import AbstractBaseExchange
-from nsetools import urls
+from nsetools.urls import urls
 from nsetools.ua import Session
 from nsetools.utils import cast_intfloat_string_values_to_intfloat
 
