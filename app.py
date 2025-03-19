@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return {"message": "GhoseTunnel"}
+    return "GhoseTunnel"
 
 @app.route("/items/<int:item_id>")
 def read_item(item_id: int):
